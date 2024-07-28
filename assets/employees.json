@@ -1,0 +1,60 @@
+{
+  "data": [
+    {
+      "userName": "Frontend",
+      "jobTitleName": "Frontend Developer",
+      "employeeCode": "E1",
+      "techstack": [
+        "React",
+        "javascript",
+        "html",
+        "css"
+      ],
+      "emailAddress": "fe@gmail.com",
+      "image": "https://www.reachfirst.com/wp-content/uploads/2018/08/Web-Development.jpg"
+    },
+    {
+      "userName": "Backend",
+      "jobTitleName": "Backend Developer",
+      "employeeCode": "E2",
+      "techstack": [
+        "React",
+        "Node",
+        "php"
+      ],
+      "emailAddress": "be@gmail.com",
+      "image": "https://www.reachfirst.com/wp-content/uploads/2018/08/Web-Development.jpg"
+    },
+    {
+      "userName": "FullStack",
+      "jobTitleName": "FullStack Developer",
+      "employeeCode": "E3",
+      "techstack": [
+        "React",
+        "javascript",
+        "node",
+        "php",
+        "html",
+        "css"
+      ],
+      "emailAddress": "fs@gmail.com",
+      "image": "https://www.reachfirst.com/wp-content/uploads/2018/08/Web-Development.jpg"
+    },
+    {
+      "userName": "Flutter",
+      "jobTitleName": "Flutter Developer",
+      "employeeCode": "E3",
+      "techstack": [
+        "Dart",
+        "Flutter",
+        "Sqlite",
+        "Firebase",
+        "Figma"
+      ],
+      "emailAddress": "fs@gmail.com",
+      "image": "https://www.reachfirst.com/wp-content/uploads/2018/08/Web-Development.jpg"
+    }
+  ],
+  "success": true,
+  "statusCode": "400"
+}

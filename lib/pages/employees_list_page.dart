@@ -5,19 +5,33 @@ import 'package:read_json_data/blocs/employees_event.dart';
 import 'package:read_json_data/blocs/employees_state.dart';
 import 'package:read_json_data/models/employee.dart';
 
-class EmployeesListPage extends StatelessWidget {
+class EmployeesListPage extends StatefulWidget {
+  @override
+  _EmployeesListPageState createState() => _EmployeesListPageState();
+}
+
+class _EmployeesListPageState extends State<EmployeesListPage> {
+  late EmployeesBloc _employeesBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _employeesBloc = context.read<EmployeesBloc>();
+    _employeesBloc.add(FetchEmployees());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Employees'),
-        backgroundColor: Color.fromARGB(255, 2, 70, 70),
+        backgroundColor: const Color.fromARGB(255, 2, 70, 70),
         foregroundColor: Colors.white,
       ),
       body: BlocBuilder<EmployeesBloc, EmployeesState>(
         builder: (context, state) {
           if (state is EmployeesLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(color: Colors.lightBlue),
             );
           } else if (state is EmployeesLoaded) {
@@ -25,7 +39,16 @@ class EmployeesListPage extends StatelessWidget {
               itemCount: state.employees.length,
               itemBuilder: (context, index) {
                 final employee = state.employees[index];
-                return _buildEmployeeItem(context, index, employee);
+                return EmployeeListItem(
+                  employee: employee,
+                  index: index,
+                  onRatingUpdated: (newRating) {
+                    // Update the rating locally and trigger UI update
+                    setState(() {
+                      state.employees[index].rating = newRating;
+                    });
+                  },
+                );
               },
             );
           } else if (state is EmployeesError) {
@@ -33,7 +56,7 @@ class EmployeesListPage extends StatelessWidget {
               child: Text(state.message),
             );
           } else {
-            return Center(
+            return const Center(
               child: Text('Unknown state'),
             );
           }
@@ -41,13 +64,26 @@ class EmployeesListPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildEmployeeItem(
-      BuildContext context, int index, Employee employee) {
+class EmployeeListItem extends StatelessWidget {
+  final Employee employee;
+  final int index;
+  final Function(double) onRatingUpdated;
+
+  const EmployeeListItem({
+    super.key,
+    required this.employee,
+    required this.index,
+    required this.onRatingUpdated,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       title: Text(
         employee.userName,
-        style: TextStyle(color: Color.fromARGB(255, 70, 4, 152)),
+        style: const TextStyle(color: Color.fromARGB(255, 70, 4, 152)),
       ),
       leading: Container(
         height: 80,
@@ -65,7 +101,7 @@ class EmployeesListPage extends StatelessWidget {
         children: [
           Text(
             employee.emailAddress,
-            style: TextStyle(color: Colors.brown),
+            style: const TextStyle(color: Colors.brown),
           ),
           Row(
             children: [
@@ -111,21 +147,22 @@ class EmployeesListPage extends StatelessWidget {
           ),
         ],
       ),
-      onTap: () {
-        // Handle onTap action
-      },
+      onTap: () {},
     );
   }
 
   void _showRatingDialog(
-      BuildContext context, int index, double currentRating) {
+    BuildContext context,
+    int index,
+    double currentRating,
+  ) {
     double newRating = currentRating;
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Rate Employee'),
+          title: const Text('Rate Employee'),
           content: StatefulBuilder(
             builder: (context, setState) {
               return Row(
@@ -149,18 +186,20 @@ class EmployeesListPage extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Rate'),
+              child: const Text('Rate'),
               onPressed: () {
                 // Update the rating using Bloc
                 context.read<EmployeesBloc>().add(
                       UpdateEmployeeRating(index, newRating),
                     );
+                // Call the callback to update the rating locally
+                onRatingUpdated(newRating);
                 Navigator.of(context).pop();
               },
             ),

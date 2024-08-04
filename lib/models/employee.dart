@@ -16,7 +16,7 @@ class Employee extends Equatable {
     required this.techStack,
     required this.emailAddress,
     required this.image,
-    this.rating = 0.0, // Default rating is 0.0
+    this.rating = 0.0,
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class Employee extends Equatable {
       techStack: List<String>.from(json['techstack']),
       emailAddress: json['emailAddress'],
       image: json['image'],
-      rating: json['rating'] ?? 0.0, // Initialize rating from JSON if available
+      rating: json['rating'] ?? 0.0,
     );
   }
 

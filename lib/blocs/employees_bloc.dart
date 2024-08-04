@@ -27,7 +27,7 @@ class EmployeesBloc extends Bloc<EmployeesEvent, EmployeesState> {
         );
         emit(EmployeesLoaded(List.from(_employees)));
       } else {
-        emit(EmployeesError('Failed to parse employees data'));
+        emit(const EmployeesError('Failed to parse employees data'));
       }
     } catch (e) {
       emit(EmployeesError('Failed to load employees file: $e'));

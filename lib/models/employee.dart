@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class Employee extends Equatable {
+  final int id;
   final String userName;
   final String jobTitleName;
   final String employeeCode;
@@ -10,6 +11,7 @@ class Employee extends Equatable {
   double rating; // Add a rating field to Employee class
 
   Employee({
+    required this.id,
     required this.userName,
     required this.jobTitleName,
     required this.employeeCode,
@@ -21,6 +23,7 @@ class Employee extends Equatable {
 
   factory Employee.fromJson(Map<String, dynamic> json) {
     return Employee(
+      id: json["id"],
       userName: json['userName'],
       jobTitleName: json['jobTitleName'],
       employeeCode: json['employeeCode'],
@@ -33,6 +36,7 @@ class Employee extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         userName,
         jobTitleName,
         employeeCode,

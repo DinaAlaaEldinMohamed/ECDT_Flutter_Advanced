@@ -1,10 +1,13 @@
-class Employee {
+import 'package:equatable/equatable.dart';
+
+class Employee extends Equatable {
   final String userName;
   final String jobTitleName;
   final String employeeCode;
   final List<String> techStack;
   final String emailAddress;
-  final String image;
+  String image;
+  double rating; // Add a rating field to Employee class
 
   Employee({
     required this.userName,
@@ -13,6 +16,7 @@ class Employee {
     required this.techStack,
     required this.emailAddress,
     required this.image,
+    this.rating = 0.0, // Default rating is 0.0
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,18 @@ class Employee {
       techStack: List<String>.from(json['techstack']),
       emailAddress: json['emailAddress'],
       image: json['image'],
+      rating: json['rating'] ?? 0.0, // Initialize rating from JSON if available
     );
   }
+
+  @override
+  List<Object?> get props => [
+        userName,
+        jobTitleName,
+        employeeCode,
+        techStack,
+        emailAddress,
+        image,
+        rating,
+      ];
 }

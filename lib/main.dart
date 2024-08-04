@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:read_json_data/blocs/employees_bloc.dart';
+import 'package:read_json_data/blocs/employees_event.dart';
 import 'package:read_json_data/pages/employees_list_page.dart';
 
 void main() {
@@ -10,9 +13,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(body: EmployeesListPage()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<EmployeesBloc>(
+          create: (context) => EmployeesBloc()..add(FetchEmployees()),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: EmployeesListPage(),
+      ),
     );
   }
 }

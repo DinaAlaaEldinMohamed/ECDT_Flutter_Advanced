@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:read_posts_api/posts/bloc/post_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:read_posts_api/posts/provider/post_provider.dart';
 import 'package:read_posts_api/widgets/post_card.dart';
 
-class PostsPage extends StatelessWidget {
+class PostsPage extends StatefulWidget {
   const PostsPage({super.key});
+
+  @override
+  _PostsPageState createState() => _PostsPageState();
+}
+
+class _PostsPageState extends State<PostsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch posts when the widget is first initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final postProvider = Provider.of<PostProvider>(context, listen: false);
+      postProvider.fetchPosts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,34 +29,33 @@ class PostsPage extends StatelessWidget {
         backgroundColor: Colors.greenAccent,
         elevation: 4.0,
       ),
-      body: BlocBuilder<PostsBloc, PostState>(
-        builder: (context, state) {
-          if (state.status == PostStatus.loading) {
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, child) {
+          if (postProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state.status == PostStatus.success) {
-            if (state.posts.isEmpty) {
-              return const Center(child: Text('No posts available.'));
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView.builder(
-                itemCount: state.posts.length,
-                itemBuilder: (context, index) {
-                  final post = state.posts[index];
-                  return PostCard(post: post);
-                },
-              ),
-            );
-          } else if (state.status == PostStatus.failure) {
-            return const Center(child: Text('Failed to load posts.'));
+          } else if (postProvider.errorMessage.isNotEmpty) {
+            return Center(child: Text(postProvider.errorMessage));
+          } else if (postProvider.posts.isEmpty) {
+            return const Center(child: Text('No posts available.'));
           }
-          return const Center(child: Text('No data'));
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: postProvider.posts.length,
+              itemBuilder: (context, index) {
+                final post = postProvider.posts[index];
+                return PostCard(post: post);
+              },
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<PostsBloc>().add(FetchPosts());
+          final postProvider =
+              Provider.of<PostProvider>(context, listen: false);
+          postProvider.fetchPosts();
         },
         backgroundColor: Colors.greenAccent,
         tooltip: 'Refresh Posts',

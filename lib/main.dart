@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:read_posts_api/posts/bloc/post_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:read_posts_api/posts/provider/post_provider.dart';
 import 'package:read_posts_api/posts/view/posts_page.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(BlocProvider(
-    create: (context) => PostsBloc(http.Client()),
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (context) => PostProvider()..fetchPosts()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +21,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Posts  api with provider',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
       home: const PostsPage(),
     );

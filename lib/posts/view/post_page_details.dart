@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:read_posts_api/posts/bloc/post_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:read_posts_api/posts/provider/post_provider.dart';
 import 'package:read_posts_api/widgets/comment_card.dart';
 
 class PostDetailPage extends StatelessWidget {
@@ -10,26 +10,32 @@ class PostDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch post details and comments when the page is first built
-    context.read<PostsBloc>().add(FetchPostById(postId));
-    context.read<PostsBloc>().add(FetchCommentsByPostId(postId));
+    final postProvider = Provider.of<PostProvider>(context);
+
+    // Fetch data if not already fetched
+    if (postProvider.post == null && postProvider.comments.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        postProvider.fetchPostById(postId);
+        postProvider.fetchComments(postId);
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Post Details'),
         backgroundColor: Colors.greenAccent,
       ),
-      body: BlocBuilder<PostsBloc, PostState>(
-        builder: (context, state) {
-          if (state.status == PostStatus.loading) {
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, child) {
+          if (postProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state.status == PostStatus.success) {
-            final post = state.post;
-            final comments = state.comments;
-
-            if (post == null) {
-              return const Center(child: Text('Post not found.'));
-            }
+          } else if (postProvider.errorMessage.isNotEmpty) {
+            return Center(child: Text(postProvider.errorMessage));
+          } else if (postProvider.post == null) {
+            return const Center(child: Text('Post not found.'));
+          } else {
+            final post = postProvider.post!;
+            final comments = postProvider.comments;
 
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -85,11 +91,7 @@ class PostDetailPage extends StatelessWidget {
                 ],
               ),
             );
-          } else if (state.status == PostStatus.failure) {
-            return const Center(
-                child: Text('Failed to load post details or comments.'));
           }
-          return const Center(child: Text('No data available.'));
         },
       ),
     );

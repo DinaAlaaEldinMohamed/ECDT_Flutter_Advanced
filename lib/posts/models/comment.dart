@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class Comment extends Equatable {
+class Comment {
   final int postId;
   final int id;
   final String name;
@@ -35,6 +33,5 @@ class Comment extends Equatable {
     };
   }
 
-  @override
   List<Object?> get props => [postId, id, name, email, body];
 }

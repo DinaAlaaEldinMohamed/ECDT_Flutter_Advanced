@@ -1,9 +1,4 @@
-// lib/models/post.dart
-
-import 'package:equatable/equatable.dart';
-
-// Define the Post model
-class Post extends Equatable {
+class Post {
   final int id;
   final int userId;
   final String title;
@@ -33,6 +28,5 @@ class Post extends Equatable {
     };
   }
 
-  @override
   List<Object?> get props => [id, userId, title, body];
 }
